@@ -5,7 +5,100 @@
       </title>
   </head>
   <body>
+    <script>
+      var obfus = {
 
-  
+        // Convert to HEX
+        toHex: function(str) {
+          var result = [];
+          for (i in str) {
+            result.push("\\x" + str.charCodeAt(i).toString(16));
+          }
+          return result.join("");
+        },
+        // Convert to UNICODE
+        toUnicode: function(str){
+          var result = "";
+          for(var i = 0; i < str.length; i++){
+            result += "\\u" + ("000" + str[i].charCodeAt(0).toString(16)).substr(-4);
+          }
+          return result;
+        },
+        rstr: function(length) {
+          var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+          var result = '';
+          for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+          return "_" +result;
+        },
+        getRandomInt: function(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+
+      }
+
+      var action = "My Message!";
+      var vName = obfus.rstr(obfus.getRandomInt(32,64));
+
+      var go = [];
+/*
+      var offsets = [];   // [[0,67],[1,23],[2,34123]]
+      var max = 999;
+
+      for (var _c = 0; _c max; _c++) {
+        var _t = obfus.getRandomInt(0, max);
+
+        if (!go[_t]) {
+
+        }
+
+        text += cars[i] + "<br>";
+      }
+
+*/
+
+
+
+      go.push(obfus.toHex(""));
+      go.push(obfus.toHex("join"));
+      go.push(obfus.toHex("reverse"));
+      go.push(obfus.toHex("split"));
+      go.push(obfus.toHex("alert"));
+      go.push(action.split("").reverse().join(""));
+      go[999] = obfus.toHex("setTimeout");
+
+
+//      var output = "var " + vName + " = " + JSON.stringify(go).replace(/\\\\/g, '\\') + ";"
+
+        var output1 = "this[\"" + vName + "\"]=" + JSON.stringify(go).replace(/\\\\/g, '\\') + ";"
+
+        + "this["+vName+"[4]]("
+          //action
+          + vName +"[5]" 
+          //split("")
+          + "[" + vName +"[3]" + "](" + vName +"[0]" + ")"
+          //reverse()
+          + "[" + vName +"[2]" + "]()"
+          //join("")
+          + "[" + vName +"[1]" + "](" + vName +"[0]" + ")"
+        +")"
+      ;
+
+
+//      output = "'" + output + "'";
+
+      console.log(output1);
+
+//      this[_x[_x.length]]
+
+//      this[_x[99]](output1);
+      setTimeout(output1, 100);
+
+
+
+    </script>
+
+
+
   </body>
 </html>
