@@ -28,7 +28,8 @@
           var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
           var result = '';
           for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-          return "_" +result;
+//          return "_" +result;
+          return result;
         },
         getRandomInt: function(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -37,61 +38,70 @@
 
       }
 
-      var action = "My Message!";
-      var vName = obfus.rstr(obfus.getRandomInt(32,64));
+      var action = "Find the hidden message";
+      var vName = "_"+obfus.rstr(obfus.getRandomInt(32,64));
 
       var go = [];
-/*
-      var offsets = [];   // [[0,67],[1,23],[2,34123]]
-      var max = 999;
 
-      for (var _c = 0; _c max; _c++) {
-        var _t = obfus.getRandomInt(0, max);
+      var offsets = [];
+      var max = 150;
 
-        if (!go[_t]) {
+      var actions = [];
+      actions.push("");
+      actions.push("join");
+      actions.push("reverse");
+      actions.push("split");
 
+      actions.push("alert");          // alert, print
+
+      actions.push(action.split("").reverse().join(""));
+      
+      actions.push("SecretKeyIs:BURP".split("").reverse().join(""));
+      actions[max] = "setTimeout";
+
+      var actionsCount = 0;
+
+      while (actions.length > 0) {
+        var _t = obfus.getRandomInt(0, max); 
+
+        if (typeof go[_t] === "undefined") {
+          go[_t] = obfus.toHex(actions[0]);
+          actions.splice(0,1);
+          offsets[actionsCount] = _t;
+          actionsCount++;
         }
-
-        text += cars[i] + "<br>";
       }
 
-*/
+      for (var i = 0; i < go.length; i++) {
+        if ((typeof go[i] === "undefined" || !go[i]) && offsets[0] != i) {
+//          go[i] = obfus.toHex(obfus.rstr(obfus.getRandomInt(15, 25)));
+        }
+      }
 
+//      console.log(go);
+      console.log(offsets);
 
+      console.log(go.length);
 
-      go.push(obfus.toHex(""));
-      go.push(obfus.toHex("join"));
-      go.push(obfus.toHex("reverse"));
-      go.push(obfus.toHex("split"));
-      go.push(obfus.toHex("alert"));
-      go.push(action.split("").reverse().join(""));
-      go[999] = obfus.toHex("setTimeout");
-
-
-//      var output = "var " + vName + " = " + JSON.stringify(go).replace(/\\\\/g, '\\') + ";"
 
         var output1 = "this[\"" + vName + "\"]=" + JSON.stringify(go).replace(/\\\\/g, '\\') + ";"
 
-        + "this["+vName+"[4]]("
+        + "this["+vName+"[" + offsets[4] + "]]("
           //action
-          + vName +"[5]" 
+          + vName +"[" + offsets[5] + "]" 
           //split("")
-          + "[" + vName +"[3]" + "](" + vName +"[0]" + ")"
+          + "[" + vName +"[" + offsets[3] + "]" + "](" + vName +"[" + offsets[0] + "]" + ")"
           //reverse()
-          + "[" + vName +"[2]" + "]()"
+          + "[" + vName +"[" + offsets[2] + "]" + "]()"
           //join("")
-          + "[" + vName +"[1]" + "](" + vName +"[0]" + ")"
+          + "[" + vName +"[" + offsets[1] + "]" + "](" + vName +"[" + offsets[0] + "]" + ")"
         +")"
       ;
 
 
-//      output = "'" + output + "'";
 
       console.log(output1);
 
-//      this[_x[_x.length]]
-
-//      this[_x[99]](output1);
       setTimeout(output1, 100);
 
 
